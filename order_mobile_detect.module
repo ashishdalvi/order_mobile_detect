@@ -1,0 +1,145 @@
+<?php
+
+/**
+ * @file
+ * Detects orders placed using mobile(responsive site).
+ */
+
+/**
+ * Implements hook_help().
+ */
+function order_mobile_detect_help($path, $arg) {
+  switch ($path) {
+
+    case 'admin/help#order_mobile_detect':
+      $output = '';
+      $output .= '<h3>' . t('Introduction') . '</h3>';
+      $output .= '<p>' . t('Order Mobile Detect module helps a user detect orders placed using mobile(responsive site).');
+      $output .= '<h3>' . t('Requirements') . '</h3>';
+      $output .= '<h4>' . t('Drupal Commerce') . '</h4>';
+      $output .= t('1. You will need to download drupal commerce module from the site <a href="https://www.drupal.org/project/commerce" target= "_blank"> https://www.drupal.org/project/commerce</a>. </br>');
+      $output .= t('2. You can download this module using drush command "drush dl commerce" after that do "drush en commerce" to enable the module.');
+      $output .= '<h3>' . t('Installation / Configuration') . '</h4>';
+      $output .= 'Install as you would normally install a contributed drupal module. See:'
+          . ' <a href="https://drupal.org/documentation/install/modules-themes/modules-7" target= "_blank"> https://drupal.org/documentation/install/modules-themes/modules-7</a> '
+          . 'for further information.<br/>';
+      $output .= '<h3>' . t('Check Data') . '</h3>';
+      $output .= 'You can check the orders placed using mobile and the mobile OS related data under <a href="/admin/commerce/orders/mobile-orders" target= "_blank">admin/commerce/orders/mobile-orders</a>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function order_mobile_detect_permission() {
+  return array(
+    'access_order_mobile_detect' => array(
+      'title' => t('Order Mobile Detect'),
+      'description' => t('View orders placed using mobile.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function order_mobile_detect_menu() {
+  $items = array();
+  $items['admin/commerce/orders/mobile-orders'] = array(
+    'title' => 'Mobile Orders',
+    'description' => 'Display orders placed using mobile.',
+    'page callback' => 'order_mobile_detect_data_display',
+    'file' => 'includes/order_mobile_detect_data_display.inc',
+    'access arguments' => array('access_order_mobile_detect'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 1,
+  );
+  $items['admin/commerce/orders/mobile-orders/export'] = array(
+    'title' => 'Mobile Orders Export',
+    'description' => 'Export data related to orders placed using mobile.',
+    'page callback' => 'order_mobile_detect_data_display',
+    'file' => 'includes/order_mobile_detect_data_display.inc',
+    'access arguments' => array('access_order_mobile_detect'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_commerce_cart_product_add().
+ */
+function order_mobile_detect_commerce_cart_product_add($order, $product, $quantity, $line_item) {
+  // Include and instantiate the php's mobile-detect class.
+  require_once 'mobile_detect/Mobile_Detect.php';
+  $detect = new Mobile_Detect;
+  // Order is placed using mobile or tablet.
+  if ($detect->isMobile() || $detect->isTablet()) {
+    // Order is placed using windows mobile.
+    if ($detect->isWindowsPhoneOS()) {
+      _order_mobile_detect_insert_order_details($order->order_id, 'Windows', $detect->version('Windows Phone'));
+    }
+    // Order is placed using android mobile.
+    elseif ($detect->isAndroidOS()) {
+      _order_mobile_detect_insert_order_details($order->order_id, 'Android', $detect->version('Android'));
+    }
+    // Order is placed using iOS mobile.
+    elseif ($detect->isiOS()) {
+      _order_mobile_detect_insert_order_details($order->order_id, 'iOS', $detect->version('iPhone'));
+    }
+    // Order is placed using blackberrry mobile.
+    elseif ($detect->isBlackBerryOS()) {
+      _order_mobile_detect_insert_order_details($order->order_id, 'BlackBerry', $detect->version('BlackBerry'));
+    }
+    // Order is placed using symbian mobile.
+    elseif ($detect->isSymbianOS()) {
+      _order_mobile_detect_insert_order_details($order->order_id, 'Symbian', $detect->version('Symbian'));
+    }
+  }
+}
+
+/**
+ * Insert mobile order data.
+ * 
+ * This function inserts the data related to order placed using mobile in the
+ * database table.
+ * 
+ * @param $order_id
+ * The order id.
+ * @param $mobile_os
+ * The OS of mobile using which order was placed.
+ * @param $mobile_os_version
+ * The OS version of mobile using which order was placed.
+ */
+function _order_mobile_detect_insert_order_details($order_id, $mobile_os, $mobile_os_version) {
+  global $user;
+  if (user_is_anonymous()) {
+    $name = 'Anonymous (not verified)';
+  }
+  else {
+    $name = $user->name;
+  }
+  module_load_include('inc', 'order_mobile_detect', 'includes/order_mobile_detect_data_display');
+  if (!_order_mobile_detect_check_order_exists($order_id)) {
+    db_insert('order_mobile_detect')
+        ->fields(array(
+          'order_id' => $order_id,
+          'user' => $name,
+          'mobile_os' => $mobile_os,
+          'mobile_os_version' => $mobile_os_version,
+          'created' => REQUEST_TIME,
+        ))
+        ->execute();
+  }
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function order_mobile_detect_entity_delete($entity, $type) {
+  if ($type === 'commerce_order') {
+    db_delete('order_mobile_detect')
+        ->condition('order_id', $entity->order_id)
+        ->execute();
+  }
+}
