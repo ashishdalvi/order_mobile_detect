@@ -1,0 +1,5 @@
+services:
+  order_mobile_detect.mobile_order_subscriber:
+    class: Drupal\order_mobile_detect\EventSubscriber\MobileOrderSubscriber
+    tags:
+      - { name: event_subscriber }
