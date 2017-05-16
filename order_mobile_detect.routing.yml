@@ -1,0 +1,23 @@
+order_mobile_detect.mobile_orders_list:
+  path: '/admin/commerce/orders/mobile-orders'
+  defaults:
+    _controller: '\Drupal\order_mobile_detect\Controller\MobileOrdersController::orders'
+    _title: 'Mobile Orders'
+  requirements:
+    _permission: 'access order mobile detect'
+  weight: 1
+
+order_mobile_detect.mobile_orders_export:
+  path: '/admin/commerce/orders/mobile-orders/export'
+  defaults:
+    _controller: '\Drupal\order_mobile_detect\Controller\MobileOrdersController::orders'
+    _title: 'Mobile Orders Export'
+  requirements:
+    _permission: 'access order mobile detect'
+
+order_mobile_detect.operations_form:
+  path: '/mobile-detect-operations-form'
+  defaults:
+    _form: '\Drupal\order_mobile_detect\Form\MobileDetectOperationsForm'
+  requirements:
+    _permission: 'access order mobile detect'

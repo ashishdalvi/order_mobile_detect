@@ -11,7 +11,7 @@ INTRODUCTION
 ------------
  * This module tracks the orders placed using mobile(responsive site) and
    displays them in a tabular format.The module also provides a feature to
-   export the data.
+   export the data in csv format.
 
 
 REQUIREMENTS
@@ -23,9 +23,22 @@ This module requires the following modules:
 
 INSTALLATION
 ------------
- * Install as you would normally install a contributed drupal module. See:
-   https://drupal.org/documentation/install/modules-themes/modules-7
-   for further information.
+ * This module needs to be installed via Composer, which will download all
+   its dependent modules along-with the required libraries.
+
+   1. Add the Drupal Packagist repository
+
+       ```sh
+       composer config repositories.drupal composer https://packages.drupal.org/8
+       ```
+   This allows Composer to find Order Mobile Detect and the other Drupal modules.
+
+   2. Download Order Mobile Detect
+
+      ```sh
+      composer require "drupal/order_mobile_detect ~1.0"
+      ```
+   This will download the latest release of Order Mobile Detect.
 
 
 LIMITATIONS
@@ -39,7 +52,7 @@ LIMITATIONS
 FAQ
 ------------
  Q. Where can I see all the orders and the mobile OS related data?
- A. You can find all the data under Store >> Orders >> Mobile Orders.
+ A. You can find all the data under Commerce >> Orders >> Mobile Orders.
 
 
 MAINTAINER

@@ -1,0 +1,5 @@
+order_mobile_detect.mobile_orders.collection:
+  title: Mobile Orders
+  route_name: order_mobile_detect.mobile_orders_list
+  parent: entity.commerce_order.collection
+  description: 'Manage your mobile orders.'

@@ -1,0 +1,6 @@
+services:
+  order_mobile_detect.mobile_order_subscriber:
+    class: Drupal\order_mobile_detect\EventSubscriber\MobileOrderSubscriber
+    arguments: ['@database', '@datetime.time']
+    tags:
+      - { name: event_subscriber }

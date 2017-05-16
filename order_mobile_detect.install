@@ -1,62 +1,57 @@
 <?php
 
 /**
- * @file
- * Perform operations when the module is installed/uninstalled.
- */
-
-/**
  * Implements hook_schema().
  */
 function order_mobile_detect_schema() {
-  $schema['order_mobile_detect'] = array(
+  $schema['order_mobile_detect'] = [
     // Table description.
     'description' => 'Table to store orders placed by mobile and their data.',
     // Database table fields.
-    'fields' => array(
+    'fields' => [
       // Order ID.
-      'order_id' => array(
+      'order_id' => [
         'description' => 'The Drupal commerce order id.',
         'type' => 'int',
         'length' => 10,
         'unsigned' => TRUE,
         'not null' => TRUE,
-      ),
+      ],
       // Order owner name.
-      'user' => array(
+      'user' => [
         'description' => 'The order owner.',
         'type' => 'varchar',
         'length' => 60,
         'not null' => TRUE,
-      ),
+      ],
       // Mobile OS.
-      'mobile_os' => array(
+      'mobile_os' => [
         'description' => 'The OS of mobile from which order was placed.',
         'type' => 'varchar',
         'length' => 12,
         'not null' => TRUE,
-      ),
+      ],
       // Mobile OS version.
-      'mobile_os_version' => array(
+      'mobile_os_version' => [
         'description' => 'The OS version of mobile from which order was placed.',
         'type' => 'varchar',
         'length' => 12,
         'not null' => TRUE,
-      ),
+      ],
       // Created timestamp.
-      'created' => array(
+      'created' => [
         'description' => 'The timestamp when data is inserted in table.',
         'type' => 'int',
         'not null' => TRUE,
-      ),
-    ),
+      ],
+    ],
     // Table's primary key.
-    'primary key' => array('order_id'),
+    'primary key' => ['order_id'],
     // Table's indexes.
-    'indexes' => array(
-      'order_id' => array('order_id'),
-      'mobile_os' => array('mobile_os'),
-    ),
-  );
+    'indexes' => [
+      'order_id' => ['order_id'],
+      'mobile_os' => ['mobile_os'],
+    ],
+  ];
   return $schema;
 }

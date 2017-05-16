@@ -1,0 +1,9 @@
+entity.commerce_order.collection:
+  route_name: entity.commerce_order.collection
+  base_route: entity.commerce_order.collection
+  title: 'Orders'
+
+order_mobile_detect.mobile_orders_list:
+  route_name: order_mobile_detect.mobile_orders_list
+  base_route: entity.commerce_order.collection
+  title: 'Mobile Orders'

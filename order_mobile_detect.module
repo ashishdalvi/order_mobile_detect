@@ -1,11 +1,6 @@
 <?php
 
 /**
- * @file
- * Detects orders placed using mobile(responsive site).
- */
-
-/**
  * Implements hook_help().
  */
 function order_mobile_detect_help($path, $arg) {
@@ -30,116 +25,10 @@ function order_mobile_detect_help($path, $arg) {
 }
 
 /**
- * Implements hook_permission().
+ * Implements hook_ENTITY_TYPE_delete().
  */
-function order_mobile_detect_permission() {
-  return array(
-    'access_order_mobile_detect' => array(
-      'title' => t('Order Mobile Detect'),
-      'description' => t('View orders placed using mobile.'),
-    ),
-  );
-}
-
-/**
- * Implements hook_menu().
- */
-function order_mobile_detect_menu() {
-  $items = array();
-  $items['admin/commerce/orders/mobile-orders'] = array(
-    'title' => 'Mobile Orders',
-    'description' => 'Display orders placed using mobile.',
-    'page callback' => 'order_mobile_detect_data_display',
-    'file' => 'includes/order_mobile_detect_data_display.inc',
-    'access arguments' => array('access_order_mobile_detect'),
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 1,
-  );
-  $items['admin/commerce/orders/mobile-orders/export'] = array(
-    'title' => 'Mobile Orders Export',
-    'description' => 'Export data related to orders placed using mobile.',
-    'page callback' => 'order_mobile_detect_data_display',
-    'file' => 'includes/order_mobile_detect_data_display.inc',
-    'access arguments' => array('access_order_mobile_detect'),
-    'type' => MENU_CALLBACK,
-  );
-  return $items;
-}
-
-/**
- * Implements hook_commerce_cart_product_add().
- */
-function order_mobile_detect_commerce_cart_product_add($order, $product, $quantity, $line_item) {
-  // Include and instantiate the php's mobile-detect class.
-  require_once 'mobile_detect/Mobile_Detect.php';
-  $detect = new Mobile_Detect;
-  // Order is placed using mobile or tablet.
-  if ($detect->isMobile() || $detect->isTablet()) {
-    // Order is placed using windows mobile.
-    if ($detect->isWindowsPhoneOS()) {
-      _order_mobile_detect_insert_order_details($order->order_id, 'Windows', $detect->version('Windows Phone'));
-    }
-    // Order is placed using android mobile.
-    elseif ($detect->isAndroidOS()) {
-      _order_mobile_detect_insert_order_details($order->order_id, 'Android', $detect->version('Android'));
-    }
-    // Order is placed using iOS mobile.
-    elseif ($detect->isiOS()) {
-      _order_mobile_detect_insert_order_details($order->order_id, 'iOS', $detect->version('iPhone'));
-    }
-    // Order is placed using blackberrry mobile.
-    elseif ($detect->isBlackBerryOS()) {
-      _order_mobile_detect_insert_order_details($order->order_id, 'BlackBerry', $detect->version('BlackBerry'));
-    }
-    // Order is placed using symbian mobile.
-    elseif ($detect->isSymbianOS()) {
-      _order_mobile_detect_insert_order_details($order->order_id, 'Symbian', $detect->version('Symbian'));
-    }
-  }
-}
-
-/**
- * Insert mobile order data.
- * 
- * This function inserts the data related to order placed using mobile in the
- * database table.
- * 
- * @param $order_id
- * The order id.
- * @param $mobile_os
- * The OS of mobile using which order was placed.
- * @param $mobile_os_version
- * The OS version of mobile using which order was placed.
- */
-function _order_mobile_detect_insert_order_details($order_id, $mobile_os, $mobile_os_version) {
-  global $user;
-  if (user_is_anonymous()) {
-    $name = 'Anonymous (not verified)';
-  }
-  else {
-    $name = $user->name;
-  }
-  module_load_include('inc', 'order_mobile_detect', 'includes/order_mobile_detect_data_display');
-  if (!_order_mobile_detect_check_order_exists($order_id)) {
-    db_insert('order_mobile_detect')
-        ->fields(array(
-          'order_id' => $order_id,
-          'user' => $name,
-          'mobile_os' => $mobile_os,
-          'mobile_os_version' => $mobile_os_version,
-          'created' => REQUEST_TIME,
-        ))
-        ->execute();
-  }
-}
-
-/**
- * Implements hook_entity_delete().
- */
-function order_mobile_detect_entity_delete($entity, $type) {
-  if ($type === 'commerce_order') {
-    db_delete('order_mobile_detect')
-        ->condition('order_id', $entity->order_id)
-        ->execute();
-  }
+function order_mobile_detect_commerce_order_delete($entity) {
+  \Drupal::database()->delete('order_mobile_detect')
+      ->condition('order_id', $entity->order_id)
+      ->execute();
 }

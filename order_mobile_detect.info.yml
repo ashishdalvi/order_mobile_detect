@@ -1,0 +1,7 @@
+name: Order Mobile Detect
+description: Detects orders placed using mobile(responsive site).
+core: 8.x
+type: module
+package: Commerce (contrib)
+dependencies:
+  - commerce:commerce
