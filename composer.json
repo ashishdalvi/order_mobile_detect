@@ -1,8 +1,8 @@
 {
-  "name": "ashishdalvi/order_mobile_detect",
-  "type": "library",
+  "name": "drupal/order_mobile_detect",
+  "type": "drupal-module",
   "description": "Detects orders placed using mobile(responsive site)..",
-  "homepage": "https://github.com/ashishdalvi/order_mobile_detect",
+  "homepage": "https://drupal.org/project/order_mobile_detect",
   "require": {
     "drupal/core": "~8.2",
     "drupal/commerce": "~2.0",
