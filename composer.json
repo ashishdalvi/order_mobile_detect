@@ -1,6 +1,6 @@
 {
   "name": "ashishdalvi/order_mobile_detect",
-  "type": "drupal-module",
+  "type": "library",
   "description": "Detects orders placed using mobile(responsive site)..",
   "homepage": "https://github.com/ashishdalvi/order_mobile_detect",
   "require": {
