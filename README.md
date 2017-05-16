@@ -44,7 +44,7 @@ INSTALLATION
 LIMITATIONS
 ------------
  * Orders placed using mobile app won't be tracked.The module works only for
-   orders placed from responsive site. 
+   orders placed from responsive site.
  * Android,iOS,Blackberry,Windows and Symbian are the only supported OS.
  * No details regarding orders placed from browser will be displayed.
 
